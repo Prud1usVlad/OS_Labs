@@ -28,8 +28,9 @@ std::wstring readFile_W(const char* filename);
 
 int main()
 {
-    _tsetlocale(LC_ALL, TEXT(""));
-    //TEXT("Ukrainian")
+    // seting locale
+    _tsetlocale(LC_ALL, TEXT("Ukrainian"));
+
     // input data (generic format)
     TCHAR* t_input = new TCHAR[128];
     _tcscpy(t_input, TEXT("\n\tПрудiус Владислав Юрiйович \n\tПрудiус Юрiй Володимирович \n\tПрудiус Свiтлана Сергiївна"));
@@ -60,19 +61,15 @@ int main()
 
     //output9_11(input, w_input);
 
-    output12("ASCII");
+    output12("UTF-8");
 }
 
-// delegate function for comparison in sort functions
-int compare(const void* a, const void* b)
-{
-    return (*(wchar_t*)a - *(wchar_t*)b);
-}
+
 
 // output function for tasks from 6 to 8
 void output6_8(char* input, wchar_t* w_input, TCHAR* enc, int size) {
     std::cout << "Розмiр одного символу: " << size * 8 << " бiт" << std::endl;
-    std::cout << "Викоритстане кодування: " << enc << std::endl;
+    _tprintf(TEXT("Викоритстане кодування: %s"), enc);
     std::wcout << L"\nВивiд на стандартний потiк виведення ASCII рядка: " << std::endl;
     std::cout << input << std::endl;
     std::cout << "\nВивiд на стандартний потiк виведення UNICODE рядка: " << std::endl;
@@ -80,7 +77,13 @@ void output6_8(char* input, wchar_t* w_input, TCHAR* enc, int size) {
     std::cout << "\nВивiд в консоль UNICODE рядка за допомогою функцiї _tprintf()" << std::endl;
     _tprintf(TEXT("%s"), w_input);
     std::cout << "\nВивiд тексту у вiкно повiдомлення" << std::endl;
-    MessageBox(0, w_input, TEXT("Вивід"), MB_OK);
+    MessageBoxW(0, w_input, L"Вивід", MB_OK);
+}
+
+// delegate function for comparison in sort functions
+int compare(const void* a, const void* b)
+{
+    return (*(wchar_t*)a - *(wchar_t*)b);
 }
 
 // output function for tasks from 9 to 11
@@ -90,11 +93,11 @@ void output9_11(char* input, wchar_t* w_input) {
     qsort(w_input, wcslen(w_input), sizeof(wchar_t), compare);
     //std::sort(w_input, w_input + (wcslen(w_input)));
 
-    // translation UNICODE string into ASCII string
-    WideCharToMultiByte(CP_ACP, 0, w_input, -1, input, wcslen(w_input), "", NULL);
-
     std::cout << "\nВивiд в консоль вiдсортованого UNICODE рядка" << std::endl;
     std::wcout << w_input << std::endl;
+
+    // translation UNICODE string into ASCII string
+    WideCharToMultiByte(CP_ACP, 0, w_input, -1, input, wcslen(w_input), "", NULL);
 
     std::cout << "\nВивiд в консоль вiдсортованого UNICODE рядка, що був перетворений назад в ASCII" << std::endl;
     std::cout << input << std::endl;
@@ -129,6 +132,7 @@ void output12(std::string enc) {
 
         std::wofstream out;
         out.open(file, std::ios::app);
+        out.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 
         out << "\n" << w_text << std::endl;
         out.close();
