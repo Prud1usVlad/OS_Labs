@@ -61,7 +61,7 @@ int main()
 
     //output9_11(input, w_input);
 
-    output12("UTF-8");
+    //output12("UTF-8");
 }
 
 
