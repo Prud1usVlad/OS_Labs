@@ -1,0 +1,9 @@
+LIBRARY Lab3
+EXPORTS
+	GetKeys
+	GetE
+	GetD
+	EncryptChar
+	DecryptChar
+	EncryptStr
+	DecryptStr

@@ -1,12 +1,12 @@
 #include "pch.h"
 #include <iostream>
 #include <vector>
-#include "Lab2.h"
+#include "RSA.h"
 #include <math.h>
 
 
 // sets open and closed keys
-void GetKeys(unsigned __int64 * n, unsigned long* e, unsigned __int64* d) {
+void GetKeys(unsigned __int64* n, unsigned long* e, unsigned __int64* d) {
 
     // generates prime nums
     srand(time(NULL));
@@ -119,9 +119,9 @@ unsigned __int64 GetD(unsigned __int64 e, unsigned __int64 t)
     for (int i = 2; i < 100; i++) {
         res = ((t * i) + 1) / e;
 
-        if ((res * e) % t  == 1) return res;
+        if ((res * e) % t == 1) return res;
     }
-    
+
     return 0;
 }
 
