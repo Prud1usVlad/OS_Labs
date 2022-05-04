@@ -13,7 +13,7 @@ typedef std::string (__stdcall* f_DecryptStr)(std::vector<unsigned long> e_messa
 
 void LoadAndPrint(HINSTANCE dll, int id, int buferSize = 100);
 
-int main()
+int main(int argc, char* argv[])
 {
     // Loading library
     HINSTANCE DllInstance = LoadLibrary(TEXT("..\\x64\\Debug\\Lab3.dll"));
@@ -79,60 +79,52 @@ int main()
     FreeLibrary(DllInstance);
 
     std::cout << "\n\n\n" << " -------- Second Part -------- " << "\n\n\n";
-    std::cout << "Choose language: 1 - EN, 2 - UA" << std::endl;
 
+    if (argv[1][0] == '1') {
+        std::cout << "English selected" << std::endl;
+        DllInstance = LoadLibrary(TEXT("..\\x64\\Debug\\ResourceLibEN.dll"));
 
-    // Initializing language
-    int index = -1;
-
-     do {
-        index = std::cin.get();
-
-        if (index == 49) {
-            std::cout << "Succes! English selected" << std::endl;
-        } 
-        else if (index == 50) {
-            _tsetlocale(LC_ALL, TEXT("Ukrainian"));
-            std::cout << "Успiх! Обрано українську" << std::endl;
-        }
-        else if (index == 10) {
-            index = -1;
+        if (DllInstance) {
+            TCHAR* str = new TCHAR[100];
+            LoadString(DllInstance, 101, str, 100);
+            _tprintf(TEXT("Second name: %s\n"), str);
+            LoadString(DllInstance, 102, str, 100);
+            _tprintf(TEXT("Faculty: %s\n"), str);
+            LoadString(DllInstance, 103, str, 100);
+            _tprintf(TEXT("Study group: %s\n"), str);
+            LoadString(DllInstance, 104, str, 100);
+            _tprintf(TEXT("Subject: %s\n"), str);
+            _tprintf(TEXT("\n"));
         }
         else {
-            std::cout << "Incorrect input, try again: 1 is for EN, 2 is for UA" << std::endl;
-            std::cin.clear();
-            index = -1;
+            std::cout << "Can't load resource dll" << std::endl;
         }
-    } while (index == -1);
-
-    // Loading chosen resource library
-    if (index == 49) {
-        DllInstance = LoadLibrary(TEXT("..\\x64\\Debug\\ResourceLibEN.dll"));
     }
-    else {
+    else if (argv[1][0] == '2') {
+        _tsetlocale(LC_ALL, TEXT("Ukrainian"));
+        std::cout << "Успiх! Обрано українську" << std::endl;
         DllInstance = LoadLibrary(TEXT("..\\x64\\Debug\\ResourceLibUA.dll"));
-    }
-   
-    for (int i = 101; i < 105; i++) {
-        LoadAndPrint(DllInstance, i);
-    }
-    
 
-}
-
-// Retrieves data from dll resourse and prints it 
-void LoadAndPrint(HINSTANCE dll, int id, int buferSize) {
-    if(dll) {
-        TCHAR* str = new TCHAR[buferSize];
-        LoadString(dll, id, str, buferSize);
-        _tprintf(str);
-        _tprintf(TEXT("\n"));
-    } 
+        if (DllInstance) {
+            TCHAR* str = new TCHAR[100];
+            LoadString(DllInstance, 101, str, 100);
+            _tprintf(TEXT("Прiзвище: %s\n"), str);
+            LoadString(DllInstance, 102, str, 100);
+            _tprintf(TEXT("Факультет: %s\n"), str);
+            LoadString(DllInstance, 103, str, 100);
+            _tprintf(TEXT("Група: %s\n"), str);
+            LoadString(DllInstance, 104, str, 100);
+            _tprintf(TEXT("Предмет: %s\n"), str);
+            _tprintf(TEXT("\n"));
+        }
+        else {
+            std::cout << "Can't load resource dll" << std::endl;
+        }
+    }
     else {
-        std::cout << "Can't load data with id: " << id << std::endl;
+        std::cout << "Incorrect value of first argument. You should use 1 for English or 2 for Ukrainian" << std::endl;
     }
 }
-
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
 // Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
 

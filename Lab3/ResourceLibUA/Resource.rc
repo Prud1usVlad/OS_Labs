@@ -52,10 +52,10 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_STRING101           "Прiзвище: Прудiус"
-    IDS_STRING102           "Факультет: Комп'ютерних наук"
-    IDS_STRING103           "Група: ПЗПI-20-4"
-    IDS_STRING104           "Предмет: Операцiйнi системи "
+    IDS_STRING101           "Прудiус"
+    IDS_STRING102           "Комп'ютерних наук"
+    IDS_STRING103           "ПЗПI-20-4"
+    IDS_STRING104           "Операцiйнi системи "
 END
 
 #endif    // Русский (Россия) resources
