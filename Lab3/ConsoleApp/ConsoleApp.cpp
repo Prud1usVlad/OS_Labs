@@ -11,8 +11,6 @@ typedef void (__stdcall* f_GetKeys)(unsigned __int64* n, unsigned long* e, unsig
 typedef std::vector<unsigned long> (__stdcall* f_EncryptStr)(std::string message, unsigned long e, unsigned __int64 n);
 typedef std::string (__stdcall* f_DecryptStr)(std::vector<unsigned long> e_message, unsigned long d, unsigned __int64 n);
 
-void LoadAndPrint(HINSTANCE dll, int id, int buferSize = 100);
-
 int main(int argc, char* argv[])
 {
     // Loading library
