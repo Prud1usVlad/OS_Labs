@@ -7,22 +7,46 @@
 #include <windows.h>
 #include <fileapi.h>
 
-using std::filesystem::current_path;
-
 int main(int argc, wchar_t* argv[])
 {
     std::wcout << "Hello World!\n";
 
-    MailSystem* ms = new MailSystem();
-    ms->CreateMailbox("test");
-
-    ms->AddMessage("test", "abcdefg");
-    ms->AddMessage("test", "sdfsf");
-
-    //ms->Clear("test");
+    MailSystem* ms = new MailSystem(".\\Mailbox\\inner");
     
-    cout << ms->ReadAndDelete("test", 1);
-    //ms->Delete("test", 1);
+    ms->CreateMailbox("MyMailbox", 100);
+    ms->AddMessage("MyMailbox", "First testing message");
+    ms->AddMessage("MyMailbox", "Vestibulum sit amet tristique ligula, et volutpat elit.");
+    cout << ms->ReadMessage("MyMailbox", 1) << endl;
+    int c = ms->GetMailSystemInfo();
+
+    cout << "Mailboxes count: " << c;
+
+
+    // FUNCTION CALLS EXAMPLES
+
+    /*
+    
+        MailSystem* ms = new MailSystem(".\\Mailbox\\inner");
+        MailSystem* ms = new MailSystem();
+
+        ms->CreateMailbox("MyMailbox", 100);
+        ms->CreateMailbox("MyMailbox");
+
+        ms->AddMessage("MyMailbox", "First testing message");
+        ms->AddMessage("MyMailbox", "Vestibulum sit amet tristique ligula, et volutpat elit.");
+
+        string str = ms->ReadAndDelete("MyMailbox", 1) << endl;
+        string str = ms->ReadMessage("MyMailbox", 1) << endl;
+
+        ms->Delete("MyMailbox", 2);
+
+        ms->Clear("MyMailbox");
+
+        ms->MessageCount("MyMailbox")
+
+        int c = ms->GetMailSystemInfo();
+    */
+
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"

@@ -16,7 +16,6 @@ public:
 
 	bool CheckCRC(HANDLE hFile);
 	bool WriteCRC(HANDLE hFile);
-	bool RewriteCRC(HANDLE hFile);
 
 private: 
 

@@ -9,15 +9,19 @@
 
 using namespace std;
 
+// Basic constructor 
+/* example path : .\\dir\\subdir      */
 MailSystem::MailSystem(const char* directoryPath) {
 
 	setlocale(LC_ALL, "Ukrainian");
 	if (directoryPath == 0) {
-		_mkdir("Mailbox");
+		CreateDirectoryA("MailBox", 0);
 		loadedCorrectly = true;
 		dir = ".\\Mailbox";
 	}
 	else {
+		struct stat buffer;
+
 		if (stat(directoryPath, &buffer) != 0) {
 			wcout << L"There is no such directory: " << directoryPath << endl;
 			loadedCorrectly = false;
@@ -34,6 +38,7 @@ MailSystem::MailSystem(const char* directoryPath) {
 	crcChecker = new CRCChecker();
 }
 
+// Creates in directory file name.mail for storing data
 bool MailSystem::CreateMailbox(const char* name, unsigned int size) {
 
 	if (!loadedCorrectly) {
@@ -84,7 +89,8 @@ bool MailSystem::CreateMailbox(const char* name, unsigned int size) {
 
 }
 
-void MailSystem::GetMailSystemInfo() {
+// Returns mailbox count, and prints detailed info about mailboxes
+unsigned long MailSystem::GetMailSystemInfo() {
 	string mask = dir + "\\*.mail";
 
 	HANDLE h = FindFirstFileA(mask.c_str(), &lastFound);
@@ -116,7 +122,7 @@ void MailSystem::GetMailSystemInfo() {
 			if (fd->msgCount == 3452816845) {
 				cout << "An error occured. It seems that this file is opened in some editor, close it and try again" << endl;
 				loadedCorrectly = false;
-				return;
+				return 0xffffffff;
 			}
 
 			CloseHandle(fileHandle);
@@ -129,8 +135,12 @@ void MailSystem::GetMailSystemInfo() {
 
 	cout << "Total number of Mailboxes: " << mailboxCount << endl;
 	FindClose(h);
+
+	return mailboxCount;
 }
 
+// Calls functions to check if file has not been changed
+// If file has been changed throws warning
 bool MailSystem::CheckFileCRC(HANDLE hFile) {
 
 	if (!loadedCorrectly) {
@@ -159,6 +169,7 @@ bool MailSystem::CheckFileCRC(HANDLE hFile) {
 
 }
 
+// Opens file and calls CheckFileCRC function 
 HANDLE MailSystem::OpenFile(const char* name) {
 	string path = dir + "\\" + name + ".mail";
 
@@ -177,6 +188,7 @@ HANDLE MailSystem::OpenFile(const char* name) {
 	return h;
 }
 
+// Adds message to the mailbox with specified name
 bool MailSystem::AddMessage(const char* name, const char* message) {
 
 	if (!loadedCorrectly) {
@@ -206,7 +218,7 @@ bool MailSystem::AddMessage(const char* name, const char* message) {
 	fd->msgCount++;
 
 	if (fd->mailSize > fd->maxSize) {
-		cout << "Message box: " << name << " is out of memory. Can't add last message";
+		cout << "Mailbox: " << name << " is out of memory. Can't add last message";
 		return false;
 	}
 
@@ -225,6 +237,8 @@ bool MailSystem::AddMessage(const char* name, const char* message) {
 	return true;
 }
 
+// Reads message from the mailbox with specified name
+// index starting from 1
 string MailSystem::ReadMessage(const char* name, unsigned long index) {
 
 	if (!loadedCorrectly) {
@@ -243,9 +257,8 @@ string MailSystem::ReadMessage(const char* name, unsigned long index) {
 
 	if (index > count || index <= 0) {
 		cout << "Invalid index" << endl;
+		return "error";
 	}
-
-	//string res = GetMessageRec(h, 8, 1, index);
 
 	SetFilePointer(h, 12, 0, FILE_BEGIN);
 	DWORD size = 0;
@@ -267,6 +280,8 @@ string MailSystem::ReadMessage(const char* name, unsigned long index) {
 	return res;
 }
 
+// Reads than deletes message from mailbox with specified name
+// index starting from 1
 string MailSystem::ReadAndDelete(const char* name, unsigned long index) {
 	
 	string res = ReadMessage(name, index);
@@ -276,6 +291,8 @@ string MailSystem::ReadAndDelete(const char* name, unsigned long index) {
 	return res;
 }
 
+// Deletes message from mailbox with specified name
+// index starting from 1
 bool MailSystem::Delete(const char* name, unsigned long index) {
 
 	if (!loadedCorrectly) {
@@ -341,6 +358,7 @@ bool MailSystem::Delete(const char* name, unsigned long index) {
 	return true;
 }
 
+// Deletes all mesages from file
 bool MailSystem::Clear(const char* name) {
 	if (!loadedCorrectly) {
 		cout << "Object loaded incorrectly. Solve problems and try again" << endl;
@@ -365,6 +383,7 @@ bool MailSystem::Clear(const char* name) {
 	return true;
 }
 
+// Returns count of the messages in the mailbox with specified name
 unsigned long MailSystem::MessageCount(const char* name) {
 	if (!loadedCorrectly) {
 		cout << "Object loaded incorrectly. Solve problems and try again" << endl;

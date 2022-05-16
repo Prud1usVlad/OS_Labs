@@ -15,19 +15,6 @@ bool CRCChecker::WriteCRC(HANDLE hFile) {
 	return true;
 }
 
-bool CRCChecker::RewriteCRC(HANDLE hFile) {
-
-	SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-	DWORD size = GetFileSize(hFile, NULL);
-
-	DWORD crc = CalcCRC(hFile, size - 2);
-	DWORD realBytesWritten;
-
-	WriteFile(hFile, &crc, 2, &realBytesWritten, 0);
-
-	return true;
-}
-
 bool CRCChecker::CheckCRC(HANDLE hFile) {
 
 	SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
