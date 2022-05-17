@@ -85,6 +85,8 @@ bool MailSystem::CreateMailbox(const char* name, unsigned int size) {
 		crcChecker->WriteCRC(h);
 
 		CloseHandle(h);
+
+		cout << "Mailbox created" << endl;
 	}
 
 }
@@ -122,6 +124,8 @@ unsigned long MailSystem::GetMailSystemInfo() {
 			if (fd->msgCount == 3452816845) {
 				cout << "An error occured. It seems that this file is opened in some editor, close it and try again" << endl;
 				loadedCorrectly = false;
+				FindClose(h);
+				CloseHandle(fileHandle);
 				return 0xffffffff;
 			}
 
@@ -208,7 +212,10 @@ bool MailSystem::AddMessage(const char* name, const char* message) {
 		0
 	);
 
-	if (!CheckFileCRC(h)) return false;
+	if (!CheckFileCRC(h)) { 
+		CloseHandle(h);
+		return false; 
+	}
 
 	DWORD real;
 	FileData* fd = new FileData(h);
@@ -219,6 +226,7 @@ bool MailSystem::AddMessage(const char* name, const char* message) {
 
 	if (fd->mailSize > fd->maxSize) {
 		cout << "Mailbox: " << name << " is out of memory. Can't add last message";
+		CloseHandle(h);
 		return false;
 	}
 
@@ -248,7 +256,10 @@ string MailSystem::ReadMessage(const char* name, unsigned long index) {
 
 	HANDLE h = OpenFile(name);
 
-	if (h == INVALID_HANDLE_VALUE) return "error";
+	if (h == INVALID_HANDLE_VALUE) {
+		CloseHandle(h);
+		return "error";
+	}
 
 	DWORD real;
 	DWORD count;
@@ -257,6 +268,7 @@ string MailSystem::ReadMessage(const char* name, unsigned long index) {
 
 	if (index > count || index <= 0) {
 		cout << "Invalid index" << endl;
+		CloseHandle(h);
 		return "error";
 	}
 
@@ -302,12 +314,16 @@ bool MailSystem::Delete(const char* name, unsigned long index) {
 
 	HANDLE h = OpenFile(name);
 
-	if (h == INVALID_HANDLE_VALUE) return "error";
+	if (h == INVALID_HANDLE_VALUE) {
+		CloseHandle(h);
+		return "error";
+	}
 
 	FileData* fd = new FileData(h);
 
 	if (index > fd->msgCount || index <= 0) {
 		cout << "Invalid index" << endl;
+		CloseHandle(h);
 		return "error";
 	}
 
@@ -367,7 +383,10 @@ bool MailSystem::Clear(const char* name) {
 
 	HANDLE h = OpenFile(name);
 
-	if (h == INVALID_HANDLE_VALUE) return false;
+	if (h == INVALID_HANDLE_VALUE) {
+		CloseHandle(h);
+		return false;
+	}
 
 	DWORD real;
 	DWORD data = 0;
@@ -392,7 +411,10 @@ unsigned long MailSystem::MessageCount(const char* name) {
 
 	HANDLE h = OpenFile(name);
 
-	if (h == INVALID_HANDLE_VALUE) return 0xffffffff;
+	if (h == INVALID_HANDLE_VALUE) {
+		CloseHandle(h);
+		return 0xffffffff;
+	}
 
 	DWORD res = 0;
 	DWORD real;
